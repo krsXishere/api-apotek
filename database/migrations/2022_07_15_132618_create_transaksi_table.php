@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('total_bayar');
             $table->integer('id_user');
-            $table->integer('id_obat');
             $table->timestamps();
         });
     }

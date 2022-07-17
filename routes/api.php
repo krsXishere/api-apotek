@@ -22,6 +22,7 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('transaksi', [TransaksiController::class, 'index']);
+    Route::post('checkout', [TransaksiController::class, 'checkout']);
     Route::get('profile', [AuthController::class, 'fetch']);
     Route::get('obat', [ObatController::class, 'index']);
     Route::get('obat/tablet', [ObatController::class, 'filterTablet']);

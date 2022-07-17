@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Helpers\APIFormatter;
 use App\Http\Controllers\Controller;
+use App\Models\ItemsModel;
 use Illuminate\Http\Request;
 use App\Models\TransaksiModel;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class TransaksiController extends Controller
 {
@@ -86,6 +91,26 @@ class TransaksiController extends Controller
     }
 
     public function checkout(Request $request) {
-        $request->validate([]);
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'exists:obat,id',
+            'total_bayar' => 'required',
+        ]);
+
+        $transaksi = TransaksiModel::create([
+            'total_bayar' => $request->total_bayar,
+            'id_user' => Auth::user()->id,
+        ]);
+
+        foreach ($request->items as $obat) {
+            ItemsModel::create([
+                'id_user' => Auth::user()->id,
+                'id_obat' => $obat['id'],
+                'id_transaksi' => $transaksi->id,
+                'jumlah' => $obat['jumlah']
+            ]);
+        }
+
+        return APIFormatter::createAPI(200, 'Success', $transaksi->load('items.obat'));
     }
 }

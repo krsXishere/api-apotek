@@ -13,17 +13,22 @@ class TransaksiModel extends Model
     use SoftDeletes;
 
     protected $table = 'transaksi';
-    protected $primaryKey = 'id_transaksi';
-    public $incrementing = true;
     protected $fillable = [
         'total_bayar',
         'id_user',
-        'id_obat',
     ];
 
-    static function getTransaksi(){
-        $data = DB::table('transaksi')->join('users', 'users.id', '=', 'transaksi.id_user')->join('obat', 'obat.id', '=', 'transaksi.id_obat');
-        return $data;
+    // static function getTransaksi(){
+    //     $data = DB::table('transaksi')->join('users', 'users.id', '=', 'transaksi.id_user')->join('obat', 'obat.id', '=', 'transaksi.id_obat');
+    //     return $data;
+    // }
+
+    public function user() {
+        return $this->belongsTo(User::class, 'id_user', 'id');
+    }
+
+    public function items() {
+        return $this->hasMany(ItemsModel::class, 'id_transaksi', 'id');
     }
 
     protected $hidden = [];
